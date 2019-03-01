@@ -2,25 +2,26 @@
 	// API web pour un senseur
 	// Accepte une valeur booléenne 0 ou 1
 
-	if (isset($_GET["boolSet"]))
+	$STATE_FILE = "boolset.txt";
+	$STATE_PARAM = "boolSet";
+
+	if (isset($_GET[$STATE_PARAM]))
 	{
-		$v_param = $_GET["boolSet"];
-		$fp = fopen("boolset.txt", "w");
-
-		if ($fp !== false)
+		// Pour plus de sécurité, on s'assure que ce qui est passé en paramètre
+		// est bien valide (une valeur possible) avant d'écrire dans le fichier.
+		if ($_GET[$STATE_PARAM] == "0" || $_GET[$STATE_PARAM] == "1")
 		{
-			// Pour plus de sécurité, on s'assure que ce qui est passé en paramètre
-			// est bien valide (une valeur possible) avant d'écrire dans le fichier.
-			if ($v_param == "0")
-				fputs($fp, "0");
-			else if ($v_param == "1")
-				fputs($fp, "1");
+			$fp = fopen($STATE_FILE, "w");
 
-			fclose($fp);
+			if ($fp !== false)
+			{
+				fputs($fp, $_GET[$STATE_PARAM]);
+				fclose($fp);
+			}
 		}
 	}
 
 	// Afficher la valeur contenue dans le fichier au chargement de la page
-	if (file_exists("boolset.txt") && is_file("boolset.txt"))
-		readfile("boolset.txt");
+	if (file_exists($STATE_FILE) && is_file($STATE_FILE))
+		readfile($STATE_FILE);
 ?>
